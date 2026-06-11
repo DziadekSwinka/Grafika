@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SDF: suma, przeciecie, roznica</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f4f5f7;
+      --panel: rgba(255, 255, 255, 0.88);
+      --panel-border: rgba(30, 41, 59, 0.16);
+      --text: #172033;
+      --muted: #5d6677;
+      --active-bg: #1f6feb;
+      --active-text: #ffffff;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    canvas {
+      display: block;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    .controls {
+      position: fixed;
+      left: 20px;
+      top: 20px;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px;
+      border: 1px solid var(--panel-border);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: 0 12px 34px rgba(15, 23, 42, 0.12);
+      backdrop-filter: blur(10px);
+    }
+
+    .label {
+      margin-right: 4px;
+      color: var(--muted);
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    button {
+      min-width: 104px;
+      height: 36px;
+      border: 1px solid rgba(30, 41, 59, 0.18);
+      border-radius: 6px;
+      background: #ffffff;
+      color: var(--text);
+      font: inherit;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background 140ms ease, border-color 140ms ease, color 140ms ease;
+    }
+
+    button:hover {
+      border-color: rgba(31, 111, 235, 0.55);
+      background: #f7faff;
+    }
+
+    button[aria-pressed="true"] {
+      border-color: var(--active-bg);
+      background: var(--active-bg);
+      color: var(--active-text);
+    }
+
+    @media (max-width: 560px) {
+      .controls {
+        right: 12px;
+        left: 12px;
+        top: 12px;
+        flex-wrap: wrap;
+      }
+
+      .label {
+        width: 100%;
+      }
+
+      button {
+        flex: 1 1 96px;
+        min-width: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="gl"></canvas>
+  <div class="controls" role="group" aria-label="Operacja SDF">
+    <span class="label">Operacja</span>
+    <button type="button" data-op="0" aria-pressed="true">Suma</button>
+    <button type="button" data-op="1" aria-pressed="false">Przeciecie</button>
+    <button type="button" data-op="2" aria-pressed="false">Roznica</button>
+  </div>
+
+  <script id="vertex-shader" type="x-shader/x-vertex">
+    attribute vec2 a_position;
+
+    void main() {
+      gl_Position = vec4(a_position, 0.0, 1.0);
+    }
+  </script>
+
+  <script id="fragment-shader" type="x-shader/x-fragment">
+    precision highp float;
+
+    uniform vec2 u_resolution;
+    uniform float u_time;
+    uniform int u_operation;
+
+    float sdSphere(vec3 p, float r) {
+      return length(p) - r;
+    }
+
+    float sdBox(vec3 p, vec3 b) {
+      vec3 q = abs(p) - b;
+      return length(max(q, vec3(0.0))) + min(max(q.x, max(q.y, q.z)), 0.0);
+    }
+
+    mat2 rotate2d(float a) {
+      float s = sin(a);
+      float c = cos(a);
+      return mat2(c, -s, s, c);
+    }
+
+    float scene(vec2 uv) {
+      vec2 circlePos = vec2(
+        0.52 * sin(u_time * 0.85),
+        0.28 * sin(u_time * 1.35)
+      );
+      float circle = sdSphere(vec3(uv - circlePos, 0.0), 0.38);
+
+      vec2 boxPos = vec2(0.10 * sin(u_time * 0.55), -0.02);
+      float angle = u_time * 0.75;
+      vec2 boxUv = rotate2d(angle) * (uv - boxPos);
+      vec3 halfSize = vec3(
+        0.42 + 0.16 * sin(u_time * 1.10),
+        0.23 + 0.10 * cos(u_time * 1.45),
+        0.06
+      );
+      float box = sdBox(vec3(boxUv, 0.0), halfSize);
+
+      if (u_operation == 0) {
+        return min(circle, box);
+      }
+
+      if (u_operation == 1) {
+        return max(circle, box);
+      }
+
+      return max(circle, -box);
+    }
+
+    void main() {
+      vec2 uv = (gl_FragCoord.xy - 0.5 * u_resolution) / u_resolution.y;
+      float d = scene(uv);
+      float aa = max(1.5 / u_resolution.y, 0.0015);
+
+      vec3 bg = vec3(0.93, 0.94, 0.96);
+      vec3 grid = vec3(0.74, 0.78, 0.84);
+      vec3 inside = vec3(0.12, 0.30, 0.56);
+      vec3 rim = vec3(0.04, 0.11, 0.22);
+
+      float gridLines = smoothstep(0.018, 0.0, abs(fract(uv.x * 6.0) - 0.5) - 0.48);
+      gridLines += smoothstep(0.018, 0.0, abs(fract(uv.y * 6.0) - 0.5) - 0.48);
+
+      float mask = 1.0 - smoothstep(-aa, aa, d);
+      float edge = 1.0 - smoothstep(0.0, aa * 2.5, abs(d));
+      float glow = exp(-18.0 * abs(d));
+
+      vec3 color = mix(bg - grid * gridLines * 0.08, inside, mask);
+      color = mix(color, rim, edge * 0.65);
+      color -= vec3(0.015, 0.018, 0.022) * glow;
+
+      gl_FragColor = vec4(color, 1.0);
+    }
+  </script>
+
+  <script>
+    const canvas = document.getElementById("gl");
+    const gl = canvas.getContext("webgl", { antialias: true });
+
+    if (!gl) {
+      throw new Error("WebGL is not available in this browser.");
+    }
+
+    const vertexSource = document.getElementById("vertex-shader").textContent;
+    const fragmentSource = document.getElementById("fragment-shader").textContent;
+
+    function compileShader(type, source) {
+      const shader = gl.createShader(type);
+      gl.shaderSource(shader, source);
+      gl.compileShader(shader);
+
+      if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+        const info = gl.getShaderInfoLog(shader);
+        gl.deleteShader(shader);
+        throw new Error(info);
+      }
+
+      return shader;
+    }
+
+    const program = gl.createProgram();
+    gl.attachShader(program, compileShader(gl.VERTEX_SHADER, vertexSource));
+    gl.attachShader(program, compileShader(gl.FRAGMENT_SHADER, fragmentSource));
+    gl.linkProgram(program);
+
+    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+      throw new Error(gl.getProgramInfoLog(program));
+    }
+
+    gl.useProgram(program);
+
+    const vertices = new Float32Array([
+      -1, -1,
+       1, -1,
+      -1,  1,
+      -1,  1,
+       1, -1,
+       1,  1
+    ]);
+
+    const buffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+    gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
+
+    const positionLocation = gl.getAttribLocation(program, "a_position");
+    gl.enableVertexAttribArray(positionLocation);
+    gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
+
+    const uniforms = {
+      resolution: gl.getUniformLocation(program, "u_resolution"),
+      time: gl.getUniformLocation(program, "u_time"),
+      operation: gl.getUniformLocation(program, "u_operation")
+    };
+
+    let operation = 0;
+    const buttons = Array.from(document.querySelectorAll("[data-op]"));
+
+    buttons.forEach((button) => {
+      button.addEventListener("click", () => {
+        operation = Number(button.dataset.op);
+        buttons.forEach((item) => {
+          item.setAttribute("aria-pressed", String(item === button));
+        });
+      });
+    });
+
+    function resize() {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const width = Math.floor(canvas.clientWidth * dpr);
+      const height = Math.floor(canvas.clientHeight * dpr);
+
+      if (canvas.width !== width || canvas.height !== height) {
+        canvas.width = width;
+        canvas.height = height;
+        gl.viewport(0, 0, width, height);
+      }
+    }
+
+    function render(now) {
+      resize();
+      gl.uniform2f(uniforms.resolution, canvas.width, canvas.height);
+      gl.uniform1f(uniforms.time, now * 0.001);
+      gl.uniform1i(uniforms.operation, operation);
+      gl.drawArrays(gl.TRIANGLES, 0, 6);
+      requestAnimationFrame(render);
+    }
+
+    requestAnimationFrame(render);
+  </script>
+</body>
+</html>
