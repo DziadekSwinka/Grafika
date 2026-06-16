@@ -1,9 +1,9 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\Jakub\\Desktop\\Studia\\Pygame\\",
+  "WorkspaceRootPath": "C:\\Users\\Jakub\\Desktop\\Grafika\\Lab2 - Pygame\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{9FF6DB24-C4AC-4179-8E59-81CF39F18FA1}|Pygame\\Pygame.pyproj|C:\\Users\\Jakub\\Desktop\\Studia\\Pygame\\Pygame\\Pygame.py||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "AbsoluteMoniker": "D:0:0:{9FF6DB24-C4AC-4179-8E59-81CF39F18FA1}|Pygame\\Pygame.pyproj|C:\\Users\\Jakub\\Desktop\\Grafika\\Lab2 - Pygame\\Pygame\\Pygame.py||{8B382828-6202-11D1-8870-0000F87579D2}",
       "RelativeMoniker": "D:0:0:{9FF6DB24-C4AC-4179-8E59-81CF39F18FA1}|Pygame\\Pygame.pyproj|solutionrelative:Pygame\\Pygame.py||{8B382828-6202-11D1-8870-0000F87579D2}"
     }
   ],
@@ -24,11 +24,11 @@
               "$type": "Document",
               "DocumentIndex": 0,
               "Title": "Pygame.py",
-              "DocumentMoniker": "C:\\Users\\Jakub\\Desktop\\Studia\\Pygame\\Pygame\\Pygame.py",
+              "DocumentMoniker": "C:\\Users\\Jakub\\Desktop\\Grafika\\Lab2 - Pygame\\Pygame\\Pygame.py",
               "RelativeDocumentMoniker": "Pygame\\Pygame.py",
-              "ToolTip": "C:\\Users\\Jakub\\Desktop\\Studia\\Pygame\\Pygame\\Pygame.py",
+              "ToolTip": "C:\\Users\\Jakub\\Desktop\\Grafika\\Lab2 - Pygame\\Pygame\\Pygame.py",
               "RelativeToolTip": "Pygame\\Pygame.py",
-              "ViewState": "AgIAACQAAAAAAAAAAAAcwC0AAAARAAAAAAAAAA==",
+              "ViewState": "AgIAABUAAAAAAAAAAAAAADQAAAA3AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.002457|",
               "WhenOpened": "2026-04-21T10:28:11.78Z",
               "EditorCaption": ""

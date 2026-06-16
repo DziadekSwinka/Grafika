@@ -1,0 +1,41 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\Jakub\\Desktop\\Studia\\Pygame 2\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{45DE8DA0-2C5D-4D8B-8278-F6D437235840}|Pygame 2\\Pygame 2.pyproj|C:\\Users\\Jakub\\Desktop\\Studia\\Pygame 2\\Pygame 2\\Pygame_2.py||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{45DE8DA0-2C5D-4D8B-8278-F6D437235840}|Pygame 2\\Pygame 2.pyproj|solutionrelative:Pygame 2\\Pygame_2.py||{8B382828-6202-11D1-8870-0000F87579D2}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 100,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 1,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{aa2115a1-9712-457b-9047-dbb71ca2cdd2}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Pygame_2.py",
+              "DocumentMoniker": "C:\\Users\\Jakub\\Desktop\\Studia\\Pygame 2\\Pygame 2\\Pygame_2.py",
+              "RelativeDocumentMoniker": "Pygame 2\\Pygame_2.py",
+              "ToolTip": "C:\\Users\\Jakub\\Desktop\\Studia\\Pygame 2\\Pygame 2\\Pygame_2.py",
+              "RelativeToolTip": "Pygame 2\\Pygame_2.py",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAB4AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.002457|",
+              "WhenOpened": "2026-04-28T10:39:32.307Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
